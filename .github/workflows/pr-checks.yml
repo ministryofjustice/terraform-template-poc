@@ -5,8 +5,8 @@ on:
     branches: [ "main" ]
 
 jobs:
-  terraform-changes:
-    name: Terraform changes
+  get-terraform-directories-with-changes:
+    name: Get Top Level Terraform Directories With Changes
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -14,6 +14,9 @@ jobs:
         run: git fetch origin main:refs/remotes/origin/main
       - name: Get All Top Level Directories Changed Under `terraform/`
         run: |
-          git diff origin/main --name-only -- terraform/        `# only compare files changed under the "terraform/" directory` \
-            | sed 's/^terraform\///'                            `# removes "terraform/" at the start of the string i.e. "terraform/front-end/main.tf" -> "front-end/main.tf"` \
-            | sed -E 's_/(.*)__'                                `# removes everything after the first "/" i.e. "front-end/main.tf" -> "front-end"`
+          NOTHING=""
+          STARTS_WITH_TERRAFORM_DIRECTORY="^terraform/"
+          EVERYTHING_AFTER_FIRST_FORWARD_SLASH="/(.*)"
+          git diff origin/main --name-only -- terraform/         `# only compare files changed under the "terraform/" directory` \
+            | sed 's/"$STARTS_WITH_TERRAFORM_DIRECTORY"/$NOTHING/' `# i.e. "terraform/front-end/main.tf" -> "front-end/main.tf"` \
+            | sed -E 's/"$EVERYTHING_AFTER_FIRST_FORWARD_SLASH"/$NOTHING/'  `# i.e. "front-end/main.tf" -> "front-end"`
