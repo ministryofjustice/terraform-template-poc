@@ -8,7 +8,7 @@ jobs:
   terraform-changes:
     name: Get All Top Level Directories Changed Under `terraform/`
     outputs:
-      directories-matrix: ${{ steps.set-matrix.outputs.matrix }}
+      directories-matrix: ${{ steps.changed-terraform-directories.outputs.matrix }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -16,23 +16,28 @@ jobs:
       - id: changed-terraform-directories
         run: |
           # only compare files changed under the "terraform/" directory
-          terraform_files_changed=$(git diff origin/main --name-only -- terraform/) 
+          terraform_files_changed=$(git diff origin/main --name-only -- terraform/)
+          echo $terraform_files_changed
           
           
           top_level_directories_changed=$(echo $terraform_files_changed \
             | sed 's/^terraform\///'                         `# removes "terraform/" at the start of the string i.e. "terraform/front-end/main.tf" -> "front-end/main.tf"` \
             | sed -E 's_/(.*)__'                             `# removes everything after the first "/" i.e. "front-end/main.tf" -> "front-end"` \
           )
+          echo $top_level_directories_changed
           
           # converts multiline string to single line, wrapping each line contents with "", i.e. 'front-end\nbackend' -> '"front-end,"backend",'
           top_level_directories_changed_formatted=$(echo $top_level_directories_changed | awk '{ printf("\"%s\",",$0) } END { print s }')
-          
           echo $top_level_directories_changed_formatted
-      #            >> "$GITHUB_OUTPUT"
+          
+          output=$(echo "matrix={\"data\":[${top_level_directories_changed_formatted}]}")
+          echo $output
+          echo $output >> "$GITHUB_OUTPUT"
 
-      - id: set-matrix
-        run: |
-          echo "matrix={\"data\":[\"aws-route53-example\",\"aws-s3-example\",]}" >> $GITHUB_OUTPUT
+#      - id: set-matrix
+#        run: |
+#          echo ${{ steps.changed-terraform-directories }}
+#          echo "matrix={\"data\":[\"aws-route53-example\",\"aws-s3-example\",]}" >> $GITHUB_OUTPUT
 
   display-output:
     name: Testing output
