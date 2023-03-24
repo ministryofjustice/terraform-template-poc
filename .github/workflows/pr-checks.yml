@@ -6,14 +6,30 @@ on:
 
 jobs:
   terraform-changes:
-    name: Terraform changes
+    name: Get All Top Level Directories Changed Under `terraform/`
+    outputs:
+      directories: ${{ steps.changed-terraform-directories.outputs.matrix }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Fetch Main
-        run: git fetch origin main:refs/remotes/origin/main
-      - name: Get All Top Level Directories Changed Under `terraform/`
+      - run: git fetch origin main:refs/remotes/origin/main
+      - id: changed-terraform-directories
         run: |
-          git diff origin/main --name-only -- terraform/        `# only compare files changed under the "terraform/" directory` \
-            | sed 's/^terraform\///'                            `# removes "terraform/" at the start of the string i.e. "terraform/front-end/main.tf" -> "front-end/main.tf"` \
-            | sed -E 's_/(.*)__'                                `# removes everything after the first "/" i.e. "front-end/main.tf" -> "front-end"`
+          top_level_directories_changed=$(git diff origin/main --name-only -- terraform/   `# only compare files changed under the "terraform/" directory` \
+            | sed 's/^terraform\///'                                                       `# removes "terraform/" at the start of the string i.e. "terraform/front-end/main.tf" -> "front-end/main.tf"` \
+            | sed -E 's_/(.*)__'                                                           `# removes everything after the first "/" i.e. "front-end/main.tf" -> "front-end"` \
+            | awk '{ printf("\"%s\",",$0) } END { print s }'                               `# converts multiline string to single line, wrapping each line contents with "", i.e. 'front-end\nbackend' -> '"front-end","backend",'` \
+          )
+          
+          # create a JSON object to be outputted with list of directories
+          echo "matrix={\"matrix\":[${top_level_directories_changed}]}" >> "$GITHUB_OUTPUT"
+
+  display-each-directory:
+    name: Display Each Directory
+    needs: terraform-changes
+    strategy:
+      matrix:
+        directory: ${{ fromJSON(needs.terraform-changes.outputs.directories).matrix }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo ${{ matrix.directory }}
