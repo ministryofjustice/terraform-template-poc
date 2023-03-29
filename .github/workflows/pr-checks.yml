@@ -18,6 +18,7 @@ jobs:
           top_level_directories_changed=$(git diff origin/main --name-only -- terraform/   `# only compare files changed under the "terraform/" directory` \
             | sed 's/^terraform\///'                                                       `# removes "terraform/" at the start of the string i.e. "terraform/front-end/main.tf" -> "front-end/main.tf"` \
             | sed -E 's_/(.*)__'                                                           `# removes everything after the first "/" i.e. "front-end/main.tf" -> "front-end"` \
+            | awk '!seen[$0]++'                                                            `# remove duplicates from list i.e. "front-end\nfront-end" -> "front-end"`\
             | awk '{ printf("\"%s\",",$0) } END { print s }'                               `# converts multiline string to single line, wrapping each line contents with "", i.e. 'front-end\nbackend' -> '"front-end","backend",'` \
           )
           
