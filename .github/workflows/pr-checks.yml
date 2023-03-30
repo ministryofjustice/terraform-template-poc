@@ -54,5 +54,5 @@ jobs:
           cd terraform/${{ matrix.directory }}
           terraform init \
             -backend-config="../../backend.hcl" \ 
-            -backend-config="key=${{ matrix.directory }}/terraform.tfstate" \
+            -backend-config="key=\"${{ matrix.directory }}\"/terraform.tfstate" \
           terraform plan
