@@ -10,7 +10,9 @@ terraform {
 }
 
 
-provider "github" {}
+provider "github" {
+  owner = "moj-analytical-services"
+}
 
 resource "github_membership" "membership_for_nick" {
     username = "NickWalt01"
