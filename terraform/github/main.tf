@@ -9,12 +9,11 @@ terraform {
   }
 }
 
-
 provider "github" {
-  owner = "moj-analytical-services"
+  owner = " ministryofjustice-test"
 }
 
 resource "github_membership" "membership_for_nick" {
-    username = "NickWalt01"
-    role     = "member"
+  username = "NickWalt01"
+  role     = "member"
 }
