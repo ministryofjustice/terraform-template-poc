@@ -50,9 +50,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_STATE_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_STATE_SECRET_ACCESS_KEY }}
+          DIRECTORY: ${{ matrix.directory }}
         run: |
-          cd terraform/${{ matrix.directory }}
-          terraform init \
-            --backend-config="../../backend.hcl" \ 
-            --backend-config="key=\"${{ matrix.directory }}\"/terraform.tfstate" \
+          cd terraform/${DIRECTORY}
+          terraform init -backend-config="../../backend.hcl" -backend-config="key=${DIRECTORY}/terraform.tfstate"
           terraform plan
