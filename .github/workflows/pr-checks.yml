@@ -45,16 +45,14 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: hashicorp/setup-terraform@v2
-      - run: cd terraform/${{ matrix.directory }}
       - env:
           AWS_DEFAULT_REGION: "eu-west-2"
           GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_STATE_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_STATE_SECRET_ACCESS_KEY }}
         run: |
+          cd terraform/${{ matrix.directory }}
           terraform init \
-            -backend-config="encrypt=true" \ 
-            -backend-config="bucket=cloud-platform-7a481a8e1fa4ad1cca341e9247fcfdb6" \ 
-            -backend-config="dynamodb_table=cp-0f78cd437cb76b69" \
+            -backend-config="../../backend.hcl" \ 
             -backend-config="key=${{ matrix.directory }}/terraform.tfstate" \
           terraform plan
