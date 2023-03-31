@@ -34,3 +34,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo ${{ matrix.directory }}
+
+  terraform-plan:
+    name: Terraform Plan
+    needs: terraform-changes
+    strategy:
+      matrix:
+        directory: ${{ fromJSON(needs.terraform-changes.outputs.directories).matrix }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hashicorp/setup-terraform@v2
+      - env:
+          AWS_DEFAULT_REGION: "eu-west-2"
+          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_STATE_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_STATE_SECRET_ACCESS_KEY }}
+          DIRECTORY: ${{ matrix.directory }}
+        run: |
+          cd terraform/${DIRECTORY}
+          terraform init -backend-config="../../backend.hcl" -backend-config="key=${DIRECTORY}/terraform.tfstate"
+          terraform plan
