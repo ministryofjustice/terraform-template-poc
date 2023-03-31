@@ -1,1 +1,1 @@
-resource "" "test-2" {}
+resource "" "test-2-test" {}
