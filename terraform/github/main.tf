@@ -13,7 +13,7 @@ provider "github" {
   owner = " ministryofjustice-test"
 }
 
-resource "github_membership" "membership_for_nick" {
+resource "github_membership" "for_nick" {
   username = "NickWalt01"
   role     = "member"
 }
