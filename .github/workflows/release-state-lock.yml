@@ -7,7 +7,7 @@ on:
         description: 'Directory to execute Terraform'
         required: true
         type: string
-      lockID:
+      lockId:
         description: 'The LockID of the state lock'
         required: true
         type: string
