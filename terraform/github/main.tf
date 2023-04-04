@@ -19,6 +19,6 @@ resource "github_membership" "for_nick" {
 }
 
 variable "test-1" {
-  type = string
+  type        = string
   description = "testing merge into main workflow"
 }
