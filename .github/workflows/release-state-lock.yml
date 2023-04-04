@@ -2,14 +2,15 @@ name: 'Release State Lock'
 
 on:
   workflow_dispatch:
-    directory:
-      description: 'Directory to execute Terraform'
-      required: true
-      type: string
-    lockID:
-      description: 'The LockID of the state lock'
-      required: true
-      type: string
+    inputs:
+      directory:
+        description: 'Directory to execute Terraform'
+        required: true
+        type: string
+      lockID:
+        description: 'The LockID of the state lock'
+        required: true
+        type: string
 
 jobs:
   terraform-state-unlock:
