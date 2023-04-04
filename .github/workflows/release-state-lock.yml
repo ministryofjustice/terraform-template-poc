@@ -28,4 +28,4 @@ jobs:
           LOCK_ID: ${{ inputs.lockId }}
         run: |
           cd terraform/${DIRECTORY}
-          terraform force-unlock "$LOCK_ID" -force
+          terraform force-unlock -force "$LOCK_ID" 
