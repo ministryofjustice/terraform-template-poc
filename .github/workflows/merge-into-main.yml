@@ -16,6 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: git fetch origin main:refs/remotes/origin/main
+      - run: git pull
       - id: changed-terraform-directories
         env:
           BASE_REF: ${{ github.event.base_ref }}
