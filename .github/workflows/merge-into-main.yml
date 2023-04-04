@@ -1,9 +1,12 @@
 name: 'Merge Into Main'
 
 on:
-  push:
-    branches:
-      - main
+#  TODO revert when testing is complete
+  pull_request:
+    branches: [ "main" ]
+#  push:
+#    branches:
+#      - main
 
 jobs:
   terraform-changes:
