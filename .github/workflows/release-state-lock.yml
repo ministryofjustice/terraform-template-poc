@@ -28,4 +28,5 @@ jobs:
           LOCK_ID: ${{ inputs.lockId }}
         run: |
           cd terraform/${DIRECTORY}
+          terraform init -backend-config="../../backend.hcl" -backend-config="key=${DIRECTORY}/terraform.tfstate"
           terraform force-unlock -force "$LOCK_ID" 
