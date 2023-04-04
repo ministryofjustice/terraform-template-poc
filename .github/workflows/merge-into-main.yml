@@ -2,11 +2,10 @@ name: 'Merge Into Main'
 
 on:
 #  TODO revert when testing is complete
-  pull_request:
-    branches: [ "main" ]
-#  push:
-#    branches:
-#      - main
+  push:
+    branches:
+      - main
+      - fix_merge_into_main_pipeline
 
 jobs:
   terraform-changes:
@@ -18,8 +17,11 @@ jobs:
       - uses: actions/checkout@v3
       - run: git fetch origin main:refs/remotes/origin/main
       - id: changed-terraform-directories
+        env:
+          BASE_REF: ${{ github.event.base_ref }}
+          BEFORE_REF:  ${{ github.event.before }}
         run: |
-          top_level_directories_changed=$(git diff HEAD^1 --name-only -- terraform/   `# only compare files changed under the "terraform/" directory` \
+          top_level_directories_changed=$(git diff $BASE_REF $BEFORE_REF --name-only -- terraform/   `# only compare files changed under the "terraform/" directory` \
             | sed 's/^terraform\///'                                                       `# removes "terraform/" at the start of the string i.e. "terraform/front-end/main.tf" -> "front-end/main.tf"` \
             | sed -E 's_/(.*)__'                                                           `# removes everything after the first "/" i.e. "front-end/main.tf" -> "front-end"` \
             | awk '!seen[$0]++'                                                            `# remove duplicates from list i.e. "front-end\nfront-end" -> "front-end"`\
