@@ -18,7 +18,8 @@ resource "github_membership" "for_nick" {
   role     = "member"
 }
 
-variable "test-1" {
+variable "test-2" {
   type        = string
   description = "testing merge into main workflow"
+  default     = "test"
 }
