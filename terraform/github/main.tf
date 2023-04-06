@@ -21,5 +21,5 @@ resource "github_membership" "for_nick" {
 variable "test-2" {
   type        = string
   description = "testing merge into main workflow"
-  default       = "test"
+  default     = "test"
 }
