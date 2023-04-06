@@ -54,4 +54,4 @@ jobs:
         run: |
           cd terraform/${DIRECTORY}
           terraform init -backend-config="../../backend.hcl" -backend-config="key=${DIRECTORY}/terraform.tfstate"
-          terraform plan
+          terraform plan -input=false
