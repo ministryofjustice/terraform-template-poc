@@ -10,7 +10,7 @@ terraform {
 }
 
 provider "github" {
-  owner = " ministryofjustice-test"
+  owner = "ministryofjustice-test"
 }
 
 resource "github_membership" "for_nick" {

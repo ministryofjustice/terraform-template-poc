@@ -28,8 +28,8 @@ jobs:
           # create a JSON object to be outputted with list of directories
           echo "matrix={\"matrix\":[${top_level_directories_changed}]}" >> "$GITHUB_OUTPUT"
 
-  terraform-plan:
-    name: Terraform Plan
+  terraform-apply:
+    name: Terraform Apply
     needs: terraform-changes
     strategy:
       matrix:
@@ -47,4 +47,4 @@ jobs:
         run: |
           cd terraform/${DIRECTORY}
           terraform init -backend-config="../../backend.hcl" -backend-config="key=${DIRECTORY}/terraform.tfstate"
-          terraform plan -input=false
+          terraform apply -input=false -auto-approve
