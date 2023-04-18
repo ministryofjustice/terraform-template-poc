@@ -25,16 +25,6 @@ jobs:
           # create a JSON object to be outputted with list of directories
           echo "matrix={\"matrix\":[${top_level_directories_changed}]}" >> "$GITHUB_OUTPUT"
 
-  display-each-directory:
-    name: Display Each Directory
-    needs: terraform-changes
-    strategy:
-      matrix:
-        directory: ${{ fromJSON(needs.terraform-changes.outputs.directories).matrix }}
-    runs-on: ubuntu-latest
-    steps:
-      - run: echo ${{ matrix.directory }}
-
   terraform-plan:
     name: Terraform Plan
     needs: terraform-changes
