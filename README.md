@@ -6,6 +6,57 @@ Welcome to our Terraform template proof of concept (POC) repository! 🎉 Please
 
 ---
 
+## 🎬 Getting Started
+
+The purpose of this template to provide a base platform for Terraform projects to quickly get into production using a scalable architecture! 🧱⚖️
+
+### Create State Infrastructure
+
+- Create a PR to Cloud Platform to create state infrastructure for Terraform to use. We recommend copying [this file](https://github.com/ministryofjustice/cloud-platform-environments/blob/main/namespaces/live.cloud-platform.service.justice.gov.uk/operations-engineering/resources/terraform-template-poc-state.tf) into your own namespace which will output the relevant secrets into you Kubernetes namespace
+
+### Get Relevant State Details From Kubernetes
+
+Retrieve the IAM users `access_key_id` and `secret_access_key`. The example script below will get these from Kubernetes (update the relevant details for your namespace):
+
+```bash
+kubectl -n operations-engineering get secret terraform-template-poc-state-user-aws-credentials -o json | jq '.data[] |= @base64d'
+```
+
+Retrieve the S3 Buckets `bucket_name` which will be shown in `bucket_arn`. The bucket name should look like `cloud-platform-7a481a8r1fa4ad1cca341e9247fcfaaa` and appears at the end of the `bucket_arn`.
+
+The example script below will get these from Kubernetes (update the relevant details for your namespace):
+
+```bash
+kubectl -n operations-engineering get secret terraform-template-poc-state-s3-bucket -o json | jq '.data[] |= @base64d'
+
+```
+
+Retrieve the DynamoDB `table_name`. The table name should look like `cp-0f78bd437cb76aaa`.
+
+The example script below will get these from Kubernetes (update the relevant details for your namespace):
+
+```bash
+kubectl -n operations-engineering get secret terraform-template-poc-state-lock-table -o json | jq '.data[] |= @base64d'
+```
+
+---
+
+At this point you should have the following information:
+
+- IAM user `access_key_id` and `secret_access_key`
+- The S3 Buckets `bucket_name`
+- The DynamoDB lock `table_name`
+
+### Create A New Repository
+
+- Create a new repository, using this template
+- Add the IAM user secrets to the GitHub Repository secrets as `AWS_STATE_ACCESS_KEY_ID` and`AWS_STATE_SECRET_ACCESS_KEY` respectively.
+- Add the `bucket_name` and `table_name` to the [backend.hcl](./backend.hcl)
+- Create a folder under [terraform/](./terraform) i.e.`mkdir terraform/frontend-app`
+- Add your Terraform code! 🎉🚀
+
+---
+
 ## ✅ Completed Features
 
 We have implemented the following features in the Terraform template:
@@ -14,6 +65,8 @@ We have implemented the following features in the Terraform template:
 - Parallel execution of multiple Terraform changes for faster provisioning and updates.
 - Optimized execution of Terraform commands, only applying changes in directories that have been modified, for improved efficiency.
 - Implemented a GitHub Action that automatically unlocks state files as a safety measure.
+- Central backend configuration to minimise duplication.
+- Automatic state file key generation based on directory via CI/CD.
 
 These features are designed to enhance the usability and performance of Terraform projects. We hope they provide value to deploy and manage infrastructure as code! 🚀🔧
 
@@ -41,6 +94,7 @@ We have identified the following ideas for improving our Terraform template:
 4. Refactor workflows to optimize logic reuse and minimize duplication.
 5. Separate Terraform change detection and execution into dedicated GitHub Actions.
 6. Refactor workflow code to trigger Terraform execution only when relevant changes are made (not just any file changes within a Terraform directory).
+7. Simplify the creation of a new project by adding a module that creates consistent state infrastructure and automatically exporting secrets to the relevant GitHub repository.
 
 Please note that this is not an exhaustive list, and these ideas may not be immediately prioritized. However, we welcome additional ideas and suggestions to continuously improve our Terraform template.
 
