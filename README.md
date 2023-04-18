@@ -11,19 +11,22 @@ Welcome to our Terraform template proof of concept (POC) repository! 🎉 Please
 The purpose of this template to provide a base platform for Terraform projects to quickly get into production using a scalable architecture! 🧱⚖️
 
 ### Create State Infrastructure
+
 - Create a PR to Cloud Platform to create state infrastructure for Terraform to use. We recommend copying [this file](https://github.com/ministryofjustice/cloud-platform-environments/blob/main/namespaces/live.cloud-platform.service.justice.gov.uk/operations-engineering/resources/terraform-template-poc-state.tf) into your own namespace which will output the relevant secrets into you Kubernetes namespace
 
 ### Get Relevant State Details From Kubernetes
 
 Retrieve the IAM users `access_key_id` and `secret_access_key`. The example script below will get these from Kubernetes (update the relevant details for your namespace):
-```bash 
+
+```bash
 kubectl -n operations-engineering get secret terraform-template-poc-state-user-aws-credentials -o json | jq '.data[] |= @base64d'
 ```
 
 Retrieve the S3 Buckets `bucket_name` which will be shown in `bucket_arn`. The bucket name should look like `cloud-platform-7a481a8r1fa4ad1cca341e9247fcfaaa` and appears at the end of the `bucket_arn`.
 
 The example script below will get these from Kubernetes (update the relevant details for your namespace):
-```bash 
+
+```bash
 kubectl -n operations-engineering get secret terraform-template-poc-state-s3-bucket -o json | jq '.data[] |= @base64d'
 
 ```
@@ -31,11 +34,10 @@ kubectl -n operations-engineering get secret terraform-template-poc-state-s3-buc
 Retrieve the DynamoDB `table_name`. The table name should look like `cp-0f78bd437cb76aaa`.
 
 The example script below will get these from Kubernetes (update the relevant details for your namespace):
-```bash 
+
+```bash
 kubectl -n operations-engineering get secret terraform-template-poc-state-lock-table -o json | jq '.data[] |= @base64d'
 ```
-
-
 
 ---
 
@@ -52,7 +54,6 @@ At this point you should have the following information:
 - Add the `bucket_name` and `table_name` to the [backend.hcl](./backend.hcl)
 - Create a folder under [terraform/](./terraform) i.e.`mkdir terraform/frontend-app`
 - Add your Terraform code! 🎉🚀
-
 
 ---
 
